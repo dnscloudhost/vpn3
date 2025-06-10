@@ -21,6 +21,7 @@ class VpnService {
   static final VpnService instance = VpnService._();
 
   final FlutterV2ray _v2ray;
+  bool _isInited = false;
   LocationConfig? _activeServer;
   Timer? _autoDisconnectTimer;
 
@@ -45,12 +46,14 @@ class VpnService {
     final parser = FlutterV2ray.parseFromURL(link);
     final config = _applyV2RayConfigTweaks(parser.getFullConfiguration());
 
-    // 3️⃣ ensure V2Ray is ready & permitted
-
-    await _v2ray.initializeV2Ray(
-      notificationIconResourceType: 'mipmap',
-      notificationIconResourceName: 'ic_launcher',
-    );
+    // 3️⃣ ensure V2Ray is ready & permitted only once
+    if (!_isInited) {
+      await _v2ray.initializeV2Ray(
+        notificationIconResourceType: 'mipmap',
+        notificationIconResourceName: 'ic_launcher',
+      );
+      _isInited = true;
+    }
     await _v2ray.requestPermission();
 
     // 4️⃣ start the tunnel
