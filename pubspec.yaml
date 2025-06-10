@@ -1,0 +1,60 @@
+name: mahannn
+description: A new Flutter project.
+publish_to: none            # این پروژه خصوصی است
+version: 1.0.0+1            # <major>.<minor>.<patch>+<build>
+
+environment:
+  sdk: ">=3.7.2 <4.0.0"
+  flutter: ">=3.3.0"
+
+################################################################################
+# Runtime dependencies
+################################################################################
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # شبکه و VPN
+  flutter_v2ray: ^1.0.10
+
+  # رابط کاربری
+  cupertino_icons: ^1.0.8
+  flutter_svg:      ^2.0.10
+  lottie:           ^3.3.1
+
+  # عملکرد برنامه
+  shared_preferences: ^2.2.3
+  device_apps:        ^2.2.0        # فهرست برنامه‌ها برای Split-Tunnel
+  http:               ^1.2.1
+  google_mobile_ads: ^6.0.0        # تبلیغات بینابینی / هوشمند
+  flutter_timezone: ^4.1.1   # تشخیص منطقهٔ زمانی کاربر
+  device_info_plus: ^11.4.0       # (اختیاری) اطلاعات دستگاه
+  webview_flutter:    ^4.4.3        # (اختیاری) نمایش صفحات وب داخل اپ
+  url_launcher: ^6.3.1
+
+################################################################################
+# Development-only dependencies
+################################################################################
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+################################################################################
+# Flutter assets
+################################################################################
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/lottie/
+    - assets/flags/
+    - assets/auto_connect.png
+    - assets/icons/
+
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+        - asset: assets/fonts/Lato-Bold.ttf
+          weight: 700
