@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       routing['rules'] = rules;
       m['routing'] = routing;
     }
-    return json.encode(m);
+    return jsonEncode(m);
   }
 
   Widget _buildFlag() {
