@@ -247,10 +247,6 @@ class _EstablishingConnectionScreenState
 
   Future<bool> _connectToConfig(LocationConfig cfg) async {
     // ensure core is initialized for a fresh connection
-    await widget.flutterV2ray.initializeV2Ray(
-      notificationIconResourceType: 'mipmap',
-      notificationIconResourceName: 'ic_launcher',
-    );
     final granted = await widget.flutterV2ray.requestPermission();
     if (!granted) return false;
 
