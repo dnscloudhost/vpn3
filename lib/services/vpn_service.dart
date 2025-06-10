@@ -25,6 +25,7 @@ class VpnService {
   LocationConfig? _activeServer;
   Timer? _autoDisconnectTimer;
 
+
   /// Connect to the first “smart” server and auto-disconnect after 5m.
 
   Future<bool> connectSmart() async {
@@ -42,8 +43,7 @@ class VpnService {
 
     // 2️⃣ parse your share/link (vmess/vless) into a full V2Ray config
 
-    final link = Uri.decodeFull(cfg.link.trim());
-    final parser = FlutterV2ray.parseFromURL(link);
+    final parser = FlutterV2ray.parseFromURL(cfg.link.trim());
     final config = _applyV2RayConfigTweaks(parser.getFullConfiguration());
 
     // 3️⃣ ensure V2Ray is ready & permitted only once
@@ -54,7 +54,11 @@ class VpnService {
       );
       _isInited = true;
     }
-    await _v2ray.requestPermission();
+    final granted = await _v2ray.requestPermission();
+    if (!granted) {
+      debugPrint('VPN permission denied');
+      return false;
+    }
 
     // 4️⃣ start the tunnel
 
@@ -125,7 +129,7 @@ class VpnService {
       m['routing'] = routing;
     }
 
-    return json.encode(m);
+    return jsonEncode(m);
   }
 
   Future<bool> _testConnection() async {
