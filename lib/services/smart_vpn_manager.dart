@@ -12,6 +12,7 @@ class SmartVpnManager {
   static final SmartVpnManager instance = SmartVpnManager._();
 
   final FlutterV2ray _v2ray;
+  bool _isInited = false;
   List<LocationConfig> _smartServers = [];
   LocationConfig? _active;
   Timer? _autoDisconnectTimer;
@@ -27,12 +28,24 @@ class SmartVpnManager {
     final cfg = _smartServers.first;
     _active = cfg;
 
-    final link = Uri.decodeFull(cfg.link.trim());
-    final parsed = FlutterV2ray.parseFromURL(link);
+    if (!_isInited) {
+      await _v2ray.initializeV2Ray(
+        notificationIconResourceType: 'mipmap',
+        notificationIconResourceName: 'ic_launcher',
+      );
+      _isInited = true;
+    }
+
+    final granted = await _v2ray.requestPermission();
+    if (!granted) {
+      _active = null;
+      return;
+    }
+
+    final parsed = FlutterV2ray.parseFromURL(cfg.link.trim());
     final config = _applyV2RayConfigTweaks(parsed.getFullConfiguration());
     await _v2ray.startV2Ray(
       remark: cfg.country,
-
       config: config,
       proxyOnly: true,
     );
@@ -65,7 +78,7 @@ class SmartVpnManager {
     levels['0'] = level0;
     policy['levels'] = levels;
     m['policy'] = policy;
-    return json.encode(m);
+    return jsonEncode(m);
   }
 
   Future<bool> _testConnection() async {
