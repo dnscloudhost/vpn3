@@ -38,6 +38,7 @@ class _EstablishingConnectionScreenState
     extends State<EstablishingConnectionScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  bool _isInited = false;
 
   @override
   void initState() {
@@ -217,7 +218,7 @@ class _EstablishingConnectionScreenState
 
   Future<bool> _checkServerReachable(String link) async {
     try {
-      final uri = Uri.parse(Uri.decodeFull(link.trim()));
+      final uri = Uri.parse(link.trim());
       final socket = await Socket.connect(
         uri.host,
         uri.port,
@@ -247,15 +248,24 @@ class _EstablishingConnectionScreenState
 
   Future<bool> _connectToConfig(LocationConfig cfg) async {
     // ensure core is initialized for a fresh connection
+    if (!_isInited) {
+      await widget.flutterV2ray.initializeV2Ray(
+        notificationIconResourceType: 'mipmap',
+        notificationIconResourceName: 'ic_launcher',
+      );
+      _isInited = true;
+    }
+
     final granted = await widget.flutterV2ray.requestPermission();
     if (!granted) return false;
+
 
     // stop any existing tunnel before starting a new one
     await widget.flutterV2ray.stopV2Ray();
 
-    final link = Uri.decodeFull(cfg.link.trim());
-    final parsed = FlutterV2ray.parseFromURL(link);
+    final parsed = FlutterV2ray.parseFromURL(cfg.link.trim());
     final config = _applyV2RayConfigTweaks(parsed.getFullConfiguration());
+
 
     try {
       await widget.flutterV2ray.startV2Ray(
@@ -301,6 +311,6 @@ class _EstablishingConnectionScreenState
       m['routing'] = routing;
     }
 
-    return json.encode(m);
+    return jsonEncode(m);
   }
 }
